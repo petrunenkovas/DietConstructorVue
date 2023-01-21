@@ -7,38 +7,38 @@
           <h3>Расчет дневной нормы калорий</h3>
           <label for="weight">Вес в кг:</label>
           <input id="weight" type='text' placeholder="Вес в кг" v-model.number="weight">
-                    <label for="height">Рост</label>
-                    <input id="height" type='text' placeholder="Рост в см" v-model.number="height">
-                    <label for="age">Возраст</label>
-                    <input id="age" type='text' placeholder="Возраст" v-model.number="age">
-                    <p>Пол:
-                        <div> 
-                            <input type='radio' name="sex" value="female" id="female" v-model="sex">
-                            <label for="female">Женский</label>
-                        </div>
-                        <div> 
-                            <input type='radio' name="sex" value="male" id="male" v-model="sex">
-                            <label for="male">Мужской</label>
-                        </div>
-                    </p>
-                    <label for="activity">Активность:</label>
-                    <select id="activity" v-model.number="activity">
-                        <option v-for="item in activityArray" :value=item.value>{{ item.text }}</option>
-                    </select>
-                    <label for="purpose">Цель</label>
-                    <select id="purpose" v-model.number="purpose">
-                        <option v-for="item in purposeArray" :value=item.value>{{ item.text }}</option>
-                    </select>
-                    <button class="btn" type="submit">Рассчитать дневной калораж</button>
-                </div>
-            </form>
+          <label for="height">Рост</label>
+          <input id="height" type='text' placeholder="Рост в см" v-model.number="height">
+          <label for="age">Возраст</label>
+          <input id="age" type='text' placeholder="Возраст" v-model.number="age">
+          <p>Пол:
+            <div> 
+              <input type='radio' name="sex" value="female" id="female" v-model="sex">
+              <label for="female">Женский</label>
+            </div>
+            <div> 
+              <input type='radio' name="sex" value="male" id="male" v-model="sex">
+              <label for="male">Мужской</label>
+            </div>
+          </p>
+          <label for="activity">Активность:</label>
+          <select id="activity" v-model.number="activity">
+            <option v-for="item in activityArray" :value=item.value>{{ item.text }}</option>
+          </select>
+          <label for="purpose">Цель</label>
+          <select id="purpose" v-model.number="purpose">
+            <option v-for="item in purposeArray" :value=item.value>{{ item.text }}</option>
+          </select>
+          <button class="btn" type="submit">Рассчитать дневной калораж</button>
         </div>
+      </form>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    name: "dailycalories-form",
+    name: 'dailycalories-form',
     data() {
         return {
             weight: '',
@@ -70,3 +70,18 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+label {
+    text-align: center;
+    padding: 0 5px;
+}
+#female, #male {
+    vertical-align: middle;
+    margin-top: 2px;
+}
+select {
+    height: 30px;
+}
+
+</style>

@@ -1,5 +1,6 @@
 <template>
-<h2 @click=showRecipes>Рецепты</h2>
+    <div>
+    <h2 @click=showRecipes>Рецепты</h2>
     <div class="recipes">
       <div v-for="recipe in recipesList" class="recipe">
       <h3>{{ recipe.title }} <span class="calories"> {{ recipe.calories }} ккал</span></h3>
@@ -14,9 +15,11 @@
       </div>
       </div>
     </div>
+</div>
 </template>
 
 <script>
+import {recipes} from "../assets/recipts"
   export default {
     name: 'recipes-page',
     data() {
@@ -30,3 +33,10 @@
     },
 }
 </script>
+
+<style scoped>
+.recipe {
+    width: 500px;
+}
+
+</style>
