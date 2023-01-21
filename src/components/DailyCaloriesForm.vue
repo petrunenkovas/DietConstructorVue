@@ -38,7 +38,7 @@
 
 <script>
   export default {
-    name: 'dailycalories-form',
+    name: 'daily-calories-form',
     data() {
       return {
         weight: '',
