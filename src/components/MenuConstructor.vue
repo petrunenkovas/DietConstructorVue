@@ -44,7 +44,7 @@
         },
         getDayCalories(day) {
           let dayCalories = 0;
-          for (meal of day) {
+          for (let meal of day) {
             dayCalories += meal.calories;
           }
           return dayCalories;

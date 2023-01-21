@@ -5,7 +5,7 @@
         <button @click="createMenu">Составить меню на неделю</button>
         <button @click="showRecipes">Посмотреть список рецептов</button>
     </nav>
-    <dailycalories-form @countCalories="setCalories" v-if="isShownForm" @close="closeModal"></dailycalories-form>
+    <daily-calories-form @countCalories="setCalories" v-if="isShownForm" @close="closeModal"></daily-calories-form>
     <menu-constructor :menu="menu" :dailyCalories="dailyCalories" v-if="isShownMenu" @showRecipe="showRecipe"></menu-constructor>
     <recipe-dialog v-if="isShowRecipe" :recipe="recipe" @close="closeModal"></recipe-dialog>
     <recipes-page v-if="isShownRecipes"></recipes-page>
@@ -13,11 +13,11 @@
 </template>
 
 <script>
-import {recipes} from "./assets/recipts"
-import DailyCaloriesForm from './components/DailyCaloriesForm.vue'
+import {recipes} from "./assets/recipts";
+import DailyCaloriesForm from './components/DailyCaloriesForm.vue';
 import MenuConstructor from "./components/MenuConstructor.vue";
-import RecipeDialog from "./components/RecipeDialog.vue"
-import RecipesPage from "./components/RecipesPage.vue"
+import RecipeDialog from "./components/RecipeDialog.vue";
+import RecipesPage from "./components/RecipesPage.vue";
 
 
 export default {
@@ -38,7 +38,7 @@ export default {
             mealsProp: [0.33, 0.38, 0.24],
             isShowRecipe: false,
             isShownRecipes: false,
-            recipe:{},
+            recipe: {},
         }
     },
     mounted() {
@@ -67,7 +67,7 @@ export default {
         },
         createMenu() {
             const recipesForMenu = [];
-            for (recipe of recipes) {
+            for (let recipe of recipes) {
                 recipesForMenu.push({...recipe});
             }
             if (this.menu.length !== 0) {
@@ -89,7 +89,7 @@ export default {
                     }
                     mult -= 0.1;
                     recipesMeal[num].calories = Math.ceil(recipesMeal[num].calories*mult);
-                    for (item of recipesMeal[num].ingredients) {
+                    for (let item of recipesMeal[num].ingredients) {
                         item.quantity = Math.round(item.quantity*mult);
                     }
                     this.menu[i].push(recipesMeal[num]);
