@@ -62,7 +62,6 @@ export default {
         },
         showRecipe(day, meal) {
             this.recipe = this.menu[day][meal];
-            console.log(this.recipe);
             this.isShowRecipe = true;
         },
         createMenu() {
@@ -182,5 +181,17 @@ button:hover, button:focus, .currentFilter {
 .recipeMeal {
     padding: 0;
     margin: 0;
+}
+
+@media (min-width: 1024px)  {
+    #app {
+        width: 100%;
+      max-width: 1000px;
+  
+      margin-left: auto;
+      margin-right: auto;
+      
+      position: relative;
+    }
 }
 </style>

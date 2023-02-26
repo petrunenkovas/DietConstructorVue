@@ -4,11 +4,11 @@
     <div class="menu">
       <div v-for="(day, index1) in menu" class="day">
         <h3>{{ days[index1]}} <span class="calories"> {{ getDayCalories(day) }} ккал ({{getProcent(getDayCalories(day)) }}%)</span></h3>
-        <div v-for="(eating, index2) in day" class="meal">
+        <div v-for="(eating, index2) in day" class="meal" @click="showRecipe">
           <div :class="eating.meal">
               <p> {{ meals[index2] }} <span class="calories"> {{ eating.calories }} ккал ({{getProcent(eating.calories) }}%)</span></p>
               <div class="dish">
-                <i class="fa-solid fa-bars" :data-day="index1" :data-meal="index2" @click="showRecipe"></i>
+                <i class="fa-solid fa-bars" :data-day="index1" :data-meal="index2"></i>
                 <span> {{ eating.title }} </span>
               </div>
           </div>
@@ -50,7 +50,9 @@
           return dayCalories;
         },
         showRecipe(event) {
-          this.$emit('showRecipe', Number(event.target.dataset.day), Number(event.target.dataset.meal));
+          if (event.target.tagName.toLowerCase() === 'i') {
+            this.$emit('showRecipe', Number(event.target.dataset.day), Number(event.target.dataset.meal));
+          }
         },
     }
 }
