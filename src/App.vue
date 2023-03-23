@@ -193,5 +193,10 @@ button:hover, button:focus, .currentFilter {
       
       position: relative;
     }
+    .content {
+        width: 70%;
+        max-width: 1000px;
+        margin: auto;
+}
 }
 </style>

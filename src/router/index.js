@@ -7,7 +7,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/RecipesPage',
+      path: '/recipes',
       name: 'RecipesPage',
       component: RecipesPage
     }
