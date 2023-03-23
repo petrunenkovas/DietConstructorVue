@@ -30,7 +30,7 @@ import {recipes} from "../assets/recipts"
     name: 'recipes-page',
     data() {
         return {
-            meals: ['Завтрак', 'Обед', 'Ужин'],
+            meals: [{title:'breakfast', name:'Завтрак'}, {title:'lunch', name:'Обед'}, {title:'dinner', name:'Ужин'}],
             recipesList: [...recipes],
             selectedFilter: 'breakfast lunch dinner'
         }
