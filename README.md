@@ -62,5 +62,5 @@ The repository is preserved as part of my development history. Later improvement
 - Added input validation and prevented menu generation without a valid calorie target
 - Prevented meal generation from changing the original recipe data
 - Made recipe details easier to open from the weekly menu
-- Corrected asset paths for deployment under the GitHub Pages repository URL
+- Made asset paths work on both GitHub Pages and Vercel
 - Added screenshots to the README preview
