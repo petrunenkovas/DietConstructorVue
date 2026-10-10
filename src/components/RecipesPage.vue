@@ -3,8 +3,8 @@
     <h2>Рецепты</h2>
     <div class="filter">
         <div>
-            <button :class= "{currentFilter: selectedFilter === 'breakfast lunch dinner'}" @click="selectedFilter = 'breakfast lunch dinner'">Все</button>
-            <button v-for="meal in meals" :class= "{currentFilter: selectedFilter === meal.title}" @click="selectedFilter=meal.title">{{meal.name}}</button>
+            <button :class="{currentFilter: selectedFilter === allMealsFilter}" @click="selectedFilter = allMealsFilter">Все</button>
+            <button v-for="meal in meals" :class="{currentFilter: selectedFilter === meal.id}" @click="selectedFilter = meal.id">{{meal.label}}</button>
         </div>
     </div>
     <div class="recipes">
@@ -26,13 +26,15 @@
 
 <script>
 import {recipes} from "../assets/recipts"
+import {MEALS, ALL_MEALS_FILTER} from '../const';
   export default {
     name: 'recipes-page',
     data() {
         return {
-            meals: [{title:'breakfast', name:'Завтрак'}, {title:'lunch', name:'Обед'}, {title:'dinner', name:'Ужин'}],
+            meals: MEALS,
             recipesList: [...recipes],
-            selectedFilter: 'breakfast lunch dinner'
+            selectedFilter: ALL_MEALS_FILTER,
+            allMealsFilter: ALL_MEALS_FILTER
         }
     },
     mounted() {
@@ -40,8 +42,8 @@ import {recipes} from "../assets/recipts"
     },
     methods: {
         getMeal(title) {
-            const currMeal = this.meals.find((meal) => meal.title === title);
-            return currMeal.name;
+            const currMeal = this.meals.find((meal) => meal.id === title);
+            return currMeal.label;
         },
         sortRecipes() {
             return [...this.recipesList].sort((recipe1, recipe2) => { 
@@ -51,7 +53,8 @@ import {recipes} from "../assets/recipts"
     },
     computed: {
         filteredRecipes() {
-            return [...this.recipesList].filter((recipe) => this.selectedFilter.includes(recipe.meal))
+            return this.recipesList.filter(recipe =>
+                this.selectedFilter === ALL_MEALS_FILTER || recipe.meal === this.selectedFilter)
         },
     },
 }

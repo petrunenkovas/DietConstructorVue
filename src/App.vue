@@ -18,7 +18,10 @@ import DailyCaloriesForm from './components/DailyCaloriesForm.vue';
 import MenuConstructor from "./components/MenuConstructor.vue";
 import RecipeDialog from "./components/RecipeDialog.vue";
 import RecipesPage from "./components/RecipesPage.vue";
+import {MEALS, WEEKDAYS, CALORIE_STORAGE_KEY} from './const';
 
+const PORTION_TOLERANCE = 1.1;
+const PORTION_ROUNDING_FACTOR = 10;
 
 export default {
   name: 'App',
@@ -34,21 +37,19 @@ export default {
             isShownForm: false,
             isShownMenu: false,
             menu: [],
-            meals: ['breakfast', 'lunch', 'dinner'],
-            mealsProp: [0.33, 0.38, 0.24],
             isShowRecipe: false,
             isShownRecipes: false,
             recipe: {},
         }
     },
     mounted() {
-        this.dailyCalories = Number(localStorage.getItem('dailyCalories'))||0;
+        this.dailyCalories = Number(localStorage.getItem(CALORIE_STORAGE_KEY))||0;
     },
     methods: {
         setCalories(cal) {
             if (Number.isFinite(cal) && cal > 0) {
                 this.dailyCalories = cal;
-                localStorage.setItem('dailyCalories', cal);
+                localStorage.setItem(CALORIE_STORAGE_KEY, cal);
             }
         },
         showForm() {
@@ -73,16 +74,16 @@ export default {
             }
             const recipesForMenu = [...recipes];
             this.menu = [];
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < WEEKDAYS.length; i++) {
                 this.menu.push([]);
-                for (let j=0; j < 3; j++) {
-                    const recipesMeal = recipesForMenu.filter(recipe => recipe.meal === this.meals[j]);
+                for (let j=0; j < MEALS.length; j++) {
+                    const recipesMeal = recipesForMenu.filter(recipe => recipe.meal === MEALS[j].id);
                     const num = Math.floor(Math.random()*recipesMeal.length);
                     const selected = recipesMeal[num];
                     recipesForMenu.splice(recipesForMenu.indexOf(selected), 1);
-                    const targetCalories = this.mealsProp[j] * this.dailyCalories;
-                    const mult = targetCalories <= selected.calories * 1.1
-                        ? 1 : Math.ceil(targetCalories / selected.calories * 10) / 10;
+                    const targetCalories = MEALS[j].share * this.dailyCalories;
+                    const mult = targetCalories <= selected.calories * PORTION_TOLERANCE
+                        ? 1 : Math.ceil(targetCalories / selected.calories * PORTION_ROUNDING_FACTOR) / PORTION_ROUNDING_FACTOR;
                     this.menu[i].push({
                         ...selected,
                         calories: Math.ceil(selected.calories*mult),

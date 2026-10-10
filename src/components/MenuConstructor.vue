@@ -22,6 +22,9 @@
 </template>
 
 <script>
+  import {MEALS, WEEKDAYS} from '../const';
+
+  const PERCENT_FACTOR = 100;
 
   export default {
     name: 'menu-constructor',
@@ -37,13 +40,13 @@
     },
     data() {
       return {
-        days: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница','Суббота', 'Воскресенье'],
-        meals: ['Завтрак', 'Обед', 'Ужин'],
+        days: WEEKDAYS,
+        meals: MEALS.map(meal => meal.label),
       }
     },
     methods: {
         getProcent(calories) {
-          return Math.ceil(calories*100/this.dailyCalories);
+          return Math.ceil(calories * PERCENT_FACTOR / this.dailyCalories);
         },
         getDayCalories(day) {
           let dayCalories = 0;

@@ -64,3 +64,4 @@ The repository is preserved as part of my development history. Later improvement
 - Made recipe details easier to open from the weekly menu
 - Made asset paths work on both GitHub Pages and Vercel
 - Added screenshots to the README preview
+- Centralized meal settings and calorie calculation constants
