@@ -4,11 +4,14 @@
     <div class="menu">
       <div v-for="(day, index1) in menu" class="day">
         <h3>{{ days[index1]}} <span class="calories"> {{ getDayCalories(day) }} ккал ({{getProcent(getDayCalories(day)) }}%)</span></h3>
-        <div v-for="(eating, index2) in day" class="meal" @click="showRecipe">
+        <div v-for="(eating, index2) in day" class="meal" role="button" tabindex="0"
+          @click="showRecipe(index1, index2)"
+          @keydown.enter="showRecipe(index1, index2)"
+          @keydown.space.prevent="showRecipe(index1, index2)">
           <div :class="eating.meal">
               <p> {{ meals[index2] }} <span class="calories"> {{ eating.calories }} ккал ({{getProcent(eating.calories) }}%)</span></p>
               <div class="dish">
-                <i class="fa-solid fa-bars" :data-day="index1" :data-meal="index2"></i>
+                <i class="fa-solid fa-bars"></i>
                 <span> {{ eating.title }} </span>
               </div>
           </div>
@@ -49,10 +52,8 @@
           }
           return dayCalories;
         },
-        showRecipe(event) {
-          if (event.target.tagName.toLowerCase() === 'i') {
-            this.$emit('showRecipe', Number(event.target.dataset.day), Number(event.target.dataset.meal));
-          }
+        showRecipe(day, meal) {
+          this.$emit('showRecipe', day, meal);
         },
     }
 }
@@ -61,44 +62,62 @@
 <style scoped>
 .meal {
     text-align: left;
-    text-indent: 5px;
-    border-radius: 15px;
-    border: 2px solid teal;
-    margin: auto;
+    border-radius: 10px;
+    border: 1px solid #dbe8e4;
     margin-top: 10px;
-    padding: 0;
-    width: 350px;
-    vertical-align: middle;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+}
+.meal:hover, .meal:focus-within {
+    border-color: #287b74;
+    transform: translateY(-2px);
+}
+.meal:focus-visible {
+    outline: 2px solid #205e59;
+    outline-offset: 2px;
 }
 .breakfast {
     width: 100%;
 }
 
 .dish {
-    background: aliceblue;
+    background: #f1f7f5;
     width: 100%;
-    height: 100%;
-    display: inline-block;
-    padding: 10px 0;
-    border-radius: 0 0 13px 13px;
-    border-top: 1px solid teal;
+    display: flow-root;
+    padding: 12px;
+    border-top: 1px solid #dbe8e4;
 }
 
 .meal p {
-    padding: 10px 0;
+    padding: 10px 12px;
     margin: 0;
 }
 .menu {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    width: 90%;
-    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
     margin-bottom: 40px;
+}
+.day {
+    min-width: 0;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #dbe8e4;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(30, 65, 65, .08);
+}
+.day h3 {
+    margin: 0 0 14px;
+    overflow: auto;
+}
+.calories {
+    font-size: 14px;
+    font-weight: normal;
+    color: #56736f;
 }
 
 .fa-bars, .calories {
     float: right;
-    padding-right: 10px;
 }
 </style>

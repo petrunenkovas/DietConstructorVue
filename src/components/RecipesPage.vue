@@ -59,7 +59,7 @@ import {recipes} from "../assets/recipts"
 
 <style scoped>
 .recipe {
-    width: 500px;
+    width: 100%;
 }
 
 </style>

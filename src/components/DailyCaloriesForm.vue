@@ -6,29 +6,33 @@
           <span class="close" @click="closeModal">&times;</span>
           <h3>Расчет дневной нормы калорий</h3>
           <label for="weight">Вес в кг:</label>
-          <input id="weight" type='text' placeholder="Вес в кг" v-model.number="weight">
+          <input id="weight" type="number" min="1" step="any" required placeholder="Вес в кг" v-model.number="weight">
           <label for="height">Рост</label>
-          <input id="height" type='text' placeholder="Рост в см" v-model.number="height">
+          <input id="height" type="number" min="1" step="any" required placeholder="Рост в см" v-model.number="height">
           <label for="age">Возраст</label>
-          <input id="age" type='text' placeholder="Возраст" v-model.number="age">
-          <p>Пол:
-            <div> 
-              <input type='radio' name="sex" value="female" id="female" v-model="sex">
+          <input id="age" type="number" min="1" step="1" required placeholder="Возраст" v-model.number="age">
+          <fieldset>
+            <legend>Пол:</legend>
+            <div>
+              <input type="radio" name="sex" value="female" id="female" required v-model="sex">
               <label for="female">Женский</label>
             </div>
-            <div> 
-              <input type='radio' name="sex" value="male" id="male" v-model="sex">
+            <div>
+              <input type="radio" name="sex" value="male" id="male" v-model="sex">
               <label for="male">Мужской</label>
             </div>
-          </p>
+          </fieldset>
           <label for="activity">Активность:</label>
-          <select id="activity" v-model.number="activity">
-            <option v-for="item in activityArray" :value=item.value>{{ item.text }}</option>
+          <select id="activity" v-model.number="activity" required>
+            <option disabled value="">Выберите активность</option>
+            <option v-for="item in activityArray" :value="item.value">{{ item.text }}</option>
           </select>
           <label for="purpose">Цель</label>
-          <select id="purpose" v-model.number="purpose">
-            <option v-for="item in purposeArray" :value=item.value>{{ item.text }}</option>
+          <select id="purpose" v-model.number="purpose" required>
+            <option disabled value="">Выберите цель</option>
+            <option v-for="item in purposeArray" :value="item.value">{{ item.text }}</option>
           </select>
+          <p v-if="errorMessage" class="form-error" role="alert">{{ errorMessage }}</p>
           <button class="btn" type="submit">Рассчитать дневной калораж</button>
         </div>
       </form>
@@ -47,6 +51,7 @@
         sex: '',
         activity: '',
         purpose: '',
+        errorMessage: '',
         activityArray: [{value: 1.2, text: "Физическая активность отсутствует или минимальна"},
           {value: 1.38, text: "Тренировки средней тяжести 3 раза в неделю"},
           {value: 1.46, text: "Тренировки средней тяжести 5 раз в неделю"},
@@ -60,8 +65,21 @@
     },
     methods: {
       onSubmit() {
+          const validMeasurements = [this.weight, this.height, this.age].every(value => Number.isFinite(value) && value > 0);
+          const validOptions = (this.sex === 'female' || this.sex === 'male') &&
+            this.activityArray.some(item => item.value === this.activity) &&
+            this.purposeArray.some(item => item.value === this.purpose);
+          if (!validMeasurements || !validOptions) {
+              this.errorMessage = 'Заполните все поля корректными значениями.';
+              return;
+          }
           const cal = (((this.weight*10)+(this.height*6.5)-(this.age*5)+((this.sex === "female") ? -161:5))*this.activity);
-          this.$emit('countCalories', Math.ceil(cal + this.purpose*cal));
+          const dailyCalories = Math.ceil(cal + this.purpose*cal);
+          if (!Number.isFinite(dailyCalories) || dailyCalories <= 0) {
+              this.errorMessage = 'Проверьте введённые данные.';
+              return;
+          }
+          this.$emit('countCalories', dailyCalories);
           this.closeModal();
       },
       closeModal() {

@@ -46,8 +46,10 @@ export default {
     },
     methods: {
         setCalories(cal) {
-            this.dailyCalories = cal;
-            localStorage.setItem('dailyCalories', cal);
+            if (Number.isFinite(cal) && cal > 0) {
+                this.dailyCalories = cal;
+                localStorage.setItem('dailyCalories', cal);
+            }
         },
         showForm() {
             this.isShownForm = true;
@@ -65,138 +67,197 @@ export default {
             this.isShowRecipe = true;
         },
         createMenu() {
-            const recipesForMenu = [];
-            for (let recipe of recipes) {
-                recipesForMenu.push({...recipe});
+            if (!Number.isFinite(this.dailyCalories) || this.dailyCalories <= 0) {
+                this.showForm();
+                return;
             }
-            if (this.menu.length !== 0) {
-                while (this.menu.length) {
-                    this.menu.pop();
-                }
-            }
+            const recipesForMenu = [...recipes];
+            this.menu = [];
             for (let i = 0; i < 7; i++) {
                 this.menu.push([]);
                 for (let j=0; j < 3; j++) {
-                    const recipesMeal = [...recipesForMenu.filter(recipe => recipe.meal === this.meals[j])];
-                    let mult = 1.1;
+                    const recipesMeal = recipesForMenu.filter(recipe => recipe.meal === this.meals[j]);
                     const num = Math.floor(Math.random()*recipesMeal.length);
-                    recipesForMenu[(recipesMeal[num].id - 1)].meal = '';
-                    let mealCal = recipesMeal[num].calories*mult;
-                    while (mealCal < (this.mealsProp[j]* this.dailyCalories)) {
-                        mealCal = recipesMeal[num].calories*mult;
-                        mult += 0.1;
-                    }
-                    mult -= 0.1;
-                    recipesMeal[num].calories = Math.ceil(recipesMeal[num].calories*mult);
-                    for (let item of recipesMeal[num].ingredients) {
-                        item.quantity = Math.round(item.quantity*mult);
-                    }
-                    this.menu[i].push(recipesMeal[num]);
+                    const selected = recipesMeal[num];
+                    recipesForMenu.splice(recipesForMenu.indexOf(selected), 1);
+                    const targetCalories = this.mealsProp[j] * this.dailyCalories;
+                    const mult = targetCalories <= selected.calories * 1.1
+                        ? 1 : Math.ceil(targetCalories / selected.calories * 10) / 10;
+                    this.menu[i].push({
+                        ...selected,
+                        calories: Math.ceil(selected.calories*mult),
+                        ingredients: selected.ingredients.map(item => ({
+                            ...item,
+                            quantity: Math.round(item.quantity*mult)
+                        }))
+                    });
                 }
             }
             this.isShownRecipes = false;
             this.isShownMenu = true;
-            while (recipesForMenu.length) {
-                recipesForMenu.pop();
-            }
         },
     }
 }
 </script>
 
 <style>
-#app {
-    font-size: 18px;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+* {
+    box-sizing: border-box;
 }
-input, select, button {
-    text-align: center;
-    border-radius: 5px;
-    border: 1px solid teal;
-    margin: 5px 0;
-    height: 25px;
+body {
+    margin: 0;
+    background: #f4f7f5;
+    color: #23343a;
+}
+#app {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    font: 16px/1.5 Arial, sans-serif;
+}
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 16px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(30, 65, 65, .08);
+}
+button {
+    padding: 10px 16px;
+    border: 1px solid #287b74;
+    border-radius: 9px;
+    background: #e9f4f1;
+    color: #205e59;
+    font: inherit;
+    cursor: pointer;
+}
+button:hover, button:focus, .currentFilter {
+    background: #287b74;
+    color: #fff;
+}
+button:focus-visible, input:focus-visible, select:focus-visible, .close:focus-visible {
+    outline: 2px solid #205e59;
+    outline-offset: 2px;
+}
+input:not([type='radio']), select {
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #b9cfca;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
 }
 #dailycaloriesform, .recipe {
-    display:flex;
+    display: flex;
     flex-direction: column;
-    width: 350px;
-    background-color: aliceblue;
-    padding: 30px;
-    border: 2px solid teal;
-    border-radius: 10px;
+    min-width: 0;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #dbe8e4;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(30, 65, 65, .08);
 }
-button, router-link {
-    background-color:lightsteelblue;
-    margin: 5px;
+#dailycaloriesform {
+    width: min(100%, 460px);
+    gap: 7px;
+}
+#dailycaloriesform label {
+    text-align: left;
+}
+fieldset {
+    margin: 8px 0;
+    border: 1px solid #dbe8e4;
+    border-radius: 8px;
+}
+.form-error {
+    color: #a43f3f;
+    margin: 0;
 }
 h2 {
     text-align: center;
-    padding-bottom: 0;
+    margin: 32px 0 20px;
+    font-size: 30px;
 }
-
 h3 {
-    text-align: left;
-    font-size: 25px;
-    margin-top: 0;
+    font-size: 21px;
+    line-height: 1.3;
+    margin: 0 0 12px;
 }
 .dialog {
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-    background: rgba(0,0,0,0.5);
+    padding: 20px;
+    background: rgba(18, 37, 38, .6);
     position: fixed;
     display: flex;
+    overflow-y: auto;
+    z-index: 10;
 }
-
 .content {
+    width: min(100%, 650px);
     margin: auto;
 }
-
-.close {
-    position: relative;
-    top: -25px;
-    right: -15px;
-    text-align: right;
-    color: black;
-    font-size: 35px;
-    font-weight: bold;
-}
-
-.close:hover, .close:focus {
-    color: red;
-    cursor: pointer;
-}
-
-button:hover, button:focus, .currentFilter {
-    background-color:steelblue;
-    cursor: pointer;
-}
-.filter {
-    margin: auto;
-    margin-bottom: 20px;
+.content form {
     display: flex;
     justify-content: center;
+}
+.close {
+    align-self: flex-end;
+    border: 0;
+    background: none;
+    color: #42635e;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+}
+.close:hover, .close:focus {
+    color: #a43f3f;
+}
+.filter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+.filter > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+.recipes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
+}
+.recipe ul {
+    padding-left: 20px;
+}
+.recipe li {
+    clear: both;
+    padding: 4px 0;
+}
+.recipe .calories {
+    margin-left: 12px;
+}
+.instructions {
+    overflow-wrap: anywhere;
 }
 .recipeMeal {
     padding: 0;
     margin: 0;
 }
-
-@media (min-width: 1024px)  {
-    #app {
-        width: 100%;
-      max-width: 1000px;
-  
-      margin-left: auto;
-      margin-right: auto;
-      
-      position: relative;
-    }
-    .content {
-        width: 70%;
-        max-width: 1000px;
-        margin: auto;
-}
+@media (max-width: 600px) {
+    #app { padding: 12px; }
+    nav { flex-direction: column; }
+    nav button { width: 100%; }
+    h2 { font-size: 25px; }
+    #dailycaloriesform, .recipe { padding: 18px; }
 }
 </style>
